@@ -1,38 +1,160 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title %}Food Items - EcoEats{% endblock %}
+{% block title %}Inventory - Product List{% endblock %}
 
 {% block content %}
-<h2>Food Items</h2>
-<a class="button" href="/add_food_item">Add Food Item</a>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #1f2430;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+    }
 
-<form method="GET" action="/food_items" class="search-form">
-    <input type="text" name="query" placeholder="Search Food Items...">
-    <button type="submit">Search</button>
-</form>
-<a href="{% url 'export_food_items' %}" class="button">Export to CSV</a>
-<div class="categories">
-    {% for category, items in categorized_food_items.items %}
-    <div class="category-card">
-        <h4>{{ category }}</h4>
-        <ul>
-            {% for item in items %}
-            <li>
-              <strong>Name:</strong> {{ item.name }} <br>
-              <strong>Description:</strong> {{ item.description }} <br>
-              <strong>Category:</strong> {{ item.get_category_display }} <br>
-              <strong>Quantity:</strong> {{ item.quantity }} <br>
-              <strong>Expiration Date:</strong> {{ item.expiration_date }} <br>
-              <strong>Priority:</strong> {{ item.get_priority_display }} <br>
-              <strong>Refrigerated:</strong> {{ item.refrigerated|yesno:"Yes,No" }} <br>
-              <strong>Added On:</strong> {{ item.added_on }} <br>
-              <a href="{% url 'food_item_update' item.pk %}">Edit</a> | 
-              <a href="{% url 'food_item_delete' item.pk %}">Delete</a>    
-          </li>
-          <hr>
-            {% endfor %}
-        </ul>
-    </div>
-    {% endfor %}
+    .container {
+        width: 90%;
+        margin: 20px auto;
+    }
+
+    h1 {
+        text-align: left;
+        font-size: 36px;
+        margin-bottom: 20px;
+    }
+
+    h2 {
+        font-size: 24px;
+        margin-top: 30px;
+        margin-bottom: 15px;
+    }
+
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .card {
+       background: url('https://cdn.builder.io/api/v1/image/assets/TEMP/71bdd89cd00977932af29d8dd5686cdf5265699fb2ece1c82837f3757c220b58?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c') no-repeat center/cover;
+border-radius: 8px;
+        padding: 15px;
+        width: 300px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        position: relative;
+        overflow: hidden;
+        
+
+    }
+
+    .card h3 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .card p {
+        margin: 5px 0;
+        font-size: 14px;
+    }
+
+    .card-actions {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .card-actions img {
+        width: 16px;
+        height: 16px;
+        margin-left: 10px;
+        cursor: pointer;
+    }
+
+    .view-details {
+        display: block; /* Ensures it occupies a new line */
+        margin-top: 10px; /* Prevents overlap with body content */
+        color: #ff4d4d;
+        text-decoration: none;
+        font-weight: bold;
+        
+    }
+
+    .view-details:hover {
+        text-decoration: underline;
+    }
+
+   .add-product {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #1F1D2B;
+    color: white;
+    font-size: 14px;
+    padding: 10px 15px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+
+}
+.add-product svg{
+    margin-left: 30px;
+}
+
+.add-product:hover {
+    background: #cc3c3c;
+}
+</style>
+<div class="container">
+    <h1>Inventory</h1>
+    <h2>Product List</h2>
+
+    {% if categorized_food_items %}
+        {% for category, items in categorized_food_items.items %}
+            <h2>{{ category }}</h2>
+            <div class="card-container">
+                {% for item in items %}
+                    <div class="card">
+                        <div class="card-header"">
+                            <h3 style="color: white">Product Item: {{ item.name }}</h3>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Quantity:</strong> {{ item.quantity }}</p>
+                            <p><strong>Category:</strong> {{ category }}</p>
+                            <p><strong>Expiry Date:</strong> {{ item.expiration_date }}</p>
+                            <p><strong>Priority:</strong> {{ item.get_priority_display }}</p>
+                            <a href="{% url 'food_item_update' item.pk %}" class="view-details" style="color: #cc3c3c;">View Details</a>
+                        </div>
+                        <div class="card-actions">
+                            <a href="{% url 'food_item_update' item.pk %}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13" fill="none">
+                                    <path d="M0 10.4437V12.6389C0 12.8411 0.158867 13 0.361062 13H2.55632C2.6502 13 2.74407 12.9639 2.80906 12.8917L10.6947 5.01331L7.98669 2.30534L0.108319 10.1837C0.0361063 10.2559 0 10.3426 0 10.4437ZM12.7888 2.91915C12.8558 2.85234 12.9089 2.77299 12.9451 2.68563C12.9813 2.59827 13 2.50462 13 2.41005C13 2.31547 12.9813 2.22183 12.9451 2.13447C12.9089 2.04711 12.8558 1.96776 12.7888 1.90095L11.099 0.211181C11.0322 0.144237 10.9529 0.0911269 10.8655 0.0548897C10.7782 0.0186524 10.6845 0 10.59 0C10.4954 0 10.4017 0.0186524 10.3144 0.0548897C10.227 0.0911269 10.1477 0.144237 10.0809 0.211181L8.75937 1.53267L11.4673 4.24063L12.7888 2.91915Z" fill="white"/>
+                                </svg>
+                            </a>
+                            |
+                            <a href="{% url 'food_item_delete' item.pk %}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="13" viewBox="0 0 10 13" fill="none">
+                                    <path d="M0.714286 11.5556C0.714286 12.35 1.35714 13 2.14286 13H7.85714C8.64286 13 9.28571 12.35 9.28571 11.5556V2.88889H0.714286V11.5556ZM10 0.722222H7.5L6.78571 0H3.21429L2.5 0.722222H0V2.16667H10V0.722222Z" fill="white"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No products available.</p>
+    {% endif %}
 </div>
+
+<a href="/add_food_item" class="add-product">Add Food Item
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="12" fill="#EE2F2F"/>
+        <path d="M11.211 12.7143H7V11.2857H11.211V7H12.6146V11.2857H16.8256V12.7143H12.6146V17H11.211V12.7143Z" fill="white"/>
+    </svg>
+</a>
 {% endblock %}
+

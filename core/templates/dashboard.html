@@ -1,53 +1,126 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title %}Dashboard - EcoEats{% endblock %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<section class="dashboard">
-    <h2 class="dashboard-title">Welcome Back, {{ user.username }}!</h2>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 
-    <!-- Stats Overview -->
-    <div class="grid stats-overview">
-        <div class="card">
-            <h3>Total Food Items</h3>
-            <p class="number">{{ food_items|length }}</p>
-            <a href="/food_items">Manage Food Items</a>
+<div class="flex h-full">
+    <!-- Left Side Section (Optional, Uncomment if needed) -->
+    <!-- <div class="w-[104px] bg-[#252836]"></div> -->
+
+    <!-- Right Side Section -->
+    <div class="flex-grow px-2 mr-7">
+        <!-- Header Section -->
+        <p class="text-2xl font-bold mt-7" style="color: white;">Dashboard</p>
+        <div class="rounded-xl relative overflow-hidden my-7 p-6 bg-cover bg-center bg-no-repeat"
+     style='background-image: url("/static/images/Card.jpg")'>
+    <div class="ml-4">
+        <h1 class="text-3xl font-bold my-2">Welcome Back, {{ user.username }}!</h1>
+        <p class="text-lg font-bold italic opacity-90 mb-2 text-white">Cook Smart, <span class="text-red-600">Waste Less!</span></p>
+    </div>
+</div>
+
+
+
+
+
+        <!-- Statistics Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-7">
+            <!-- Total Food Items -->
+            <div class="rounded-xl p-6 hover:translate-y-[-2px] transition" style="background-color: #3d4154;">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-white mb-1">Total Food Items</p>
+                        <div class="text-red-600 text-2xl font-bold">{{ food_items|length }}</div>
+                    </div>
+                    <div class="bg-red-300/20 p-3 rounded-md text-red-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expiring Soon -->
+            <div class="rounded-xl p-6 hover:translate-y-[-2px] transition" style="background-color: #3d4154;">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-white mb-1">Expiring Soon</p>
+                        <div class="text-red-600 text-2xl font-bold">{{ expiring_soon|length }}</div>
+                    </div>
+                    <div class="bg-red-300/20 p-3 rounded-md text-red-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Recipes -->
+            <div class="rounded-xl p-6 hover:translate-y-[-2px] transition" style="background-color: #3d4154;">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-white mb-1">Total Recipes</p>
+                        <div class="text-red-600 text-2xl font-bold">{{ recipes|length }}</div>
+                    </div>
+                    <div class="bg-red-300/20 p-3 rounded-md text-red-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="card">
-            <h3>Total Recipes</h3>
-            <p class="number">{{ recipes|length }}</p>
-            <a href="/recipes">Manage Recipes</a>
+
+        <!-- Expiring Soon Section -->
+        <div class="grid grid-cols-1 md:grid-cols-1 gap-4 mb-7">
+            <h3 class="text-xl font-semibold mb-4">Expiring Soon</h3>
+            <!-- <div class="grid grid-cols-1 md:grid-cols-3 gap-4"> -->
+            {% for food_item in expiring_soon %}
+            <div class="bg-gray-700 rounded-xl p-6 hover:translate-y-[-2px] transition">
+                <h4 class="text-lg mb-2">{{ food_item.name }}</h4>
+                <div class="flex justify-between items-center">
+                    <p class="text-white">Expires: {{ food_item.expiration_date }}</p>
+                    <a href="#" class="text-red-500 hover:text-red-300 transition">View Details</a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="bg-gray-700 rounded-xl p-6 text-white">
+                <p>No items expiring soon. You're on top of things!</p>
+            </div>
+            {% endfor %}
+            <!-- </div> -->
         </div>
-        <div class="card">
-            <h3>Expiring Soon</h3>
-            <p class="number">{{ expiring_soon|length }}</p>
-            <a href="#expiring-section">See Details</a>
+
+        <!-- Recipe Section -->
+        <div class="grid grid-cols-1 md:grid-cols-1 gap-4 mb-7">
+            <h3 class="text-xl font-semibold mb-4">Recipes</h3>
+            <!-- <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full"> -->
+            {% for recipe in recipes %}
+            <div class="bg-gray-700 rounded-xl p-6 hover:translate-y-[-2px] transition">
+                <h4 class="text-lg mb-2">{{ recipe.title }}</h4>
+                <p class="text-white mb-2">{{ recipe.description }}</p>
+                <a href="#" class="text-red-500 hover:text-red-300 transition">View Recipe</a>
+            </div>
+            {% empty %}
+            <div class="bg-gray-700 rounded-xl p-6 text-white">
+                <p>No recipes available.</p>
+            </div>
+            {% endfor %}
+            <!-- </div> -->
         </div>
     </div>
-
-    <!-- Expiring Soon Section -->
-    <h3 id="expiring-section">Expiring Soon</h3>
-    <div class="grid expiring-list">
-        {% for food_item in expiring_soon %}
-        <div class="expiring-card">
-            <h4>{{ food_item.name }}</h4>
-            <p>Expires: <strong>{{ food_item.expiration_date }}</strong></p>
-        </div>
-        {% empty %}
-        <p>No food items are expiring soon. You're on top of things!</p>
-        {% endfor %}
-    </div>
-
-    <!-- Categories Section -->
-    <h3>Categories</h3>
-    <div class="grid category-section">
-        {% for category, items in categorized_food_items.items %}
-        <div class="category-card">
-            <h4>{{ category }}</h4>
-            <p>{{ items|length }} items</p>
-            <a href="/food_items?category={{ category }}">View {{ category }}</a>
-        </div>
-        {% endfor %}
-    </div>
-</section>
+</div>
 {% endblock %}

@@ -22,8 +22,8 @@ db.sqlite3
 *.pyd
 __pycache__
 media/
-staticfiles/
-static/
+# staticfiles/
+# static/
 
 # IDE/editor specific files
 .vscode/

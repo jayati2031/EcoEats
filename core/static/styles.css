@@ -1,4 +1,4 @@
-/* Base styles */
+/* 
 body {
     font-family: 'Arial', sans-serif;
     background: linear-gradient(to bottom, #e6f7e9, #d0f0c0);
@@ -7,26 +7,49 @@ body {
     padding: 0;
     width: 100%;
 }
-
-/* Navbar */
-.navbar {
-    background: linear-gradient(to right, #38a169, #2f855a);
+a{
     color: white;
-    padding: 1rem;
+    text-decoration: none;
+}
+
+.navbar {
+    background-color: #1F1D2B; 
+    color: white;
+    padding: 30px 0; 
     text-align: center;
+    width: 104px; 
+    height: 100vh; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: space-between; 
+    overflow-y: auto; 
 }
 
 .navbar a {
     color: white;
     text-decoration: none;
     margin: 0 15px;
+    max-width: 51.76px;
+    padding: 13px;
+    
 }
 
 .navbar a:hover {
     text-decoration: underline;
 }
+nav{
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+    gap: 30px;
+    align-items: center;
+    justify-content: center;
+}
 
-/* Buttons */
 button {
     background: linear-gradient(to right, #38a169, #2f855a);
     color: white;
@@ -40,8 +63,10 @@ button {
 button:hover {
     background: linear-gradient(to right, #2f855a, #276749);
 }
+h1,h2,h3,h4,h5{
+    color: #FEFEFE;
+}
 
-/* Forms */
 form {
     background: white;
     padding: 20px;
@@ -52,7 +77,7 @@ form {
 }
 
 form h2 {
-    color: #276749;
+    color: #FEFEFE;
     margin-bottom: 20px;
 }
 
@@ -69,7 +94,7 @@ form input:focus, form textarea:focus, form select:focus {
     border-color: #38a169;
 }
 
-/* Lists */
+
 ul {
     list-style: none;
     padding: 0;
@@ -83,7 +108,6 @@ ul li {
     border-radius: 5px;
 }
 
-/* Footer */
 footer {
     background: #276749;
     color: white;
@@ -93,21 +117,19 @@ footer {
     bottom: 0;
     width: 100%;
 }
-/* Center dashboard and make it attractive */
 .dashboard {
     max-width: 1200px;
     margin: 40px auto;
     text-align: center;
 }
 
-/* Dashboard Title */
+
 .dashboard-title {
     font-size: 2.5rem;
     color: #276749;
     margin-bottom: 30px;
 }
 
-/* Stats Overview */
 .stats-overview {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -116,7 +138,7 @@ footer {
 }
 
 .card {
-    background: white;
+
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -138,7 +160,7 @@ footer {
 }
 
 .card a {
-    color: #38a169;
+    color: white;
     text-decoration: none;
     font-weight: bold;
     margin-top: 15px;
@@ -150,7 +172,7 @@ footer {
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 
-/* Expiring Soon Section */
+
 .expiring-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -166,7 +188,7 @@ footer {
     text-align: left;
 }
 
-/* Category Section */
+
 .category-section {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -198,3 +220,41 @@ footer {
 .category-card:hover {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
+.logo{
+    background-color: #373643;
+    margin-bottom: 30px!important;
+}
+svg{
+    transition: 0.5s ease-in-out;
+}
+svg:hover path{
+    fill: red;
+}
+.logo svg:hover path{
+    fill: #D0D0D0;
+}
+.logout{
+    position: absolute;
+    bottom: 160px;
+}
+main{
+    overflow: hidden;
+    padding-left: 150px;
+    padding-right: 150px;
+    background: #3D4154;
+}
+.main-box{
+    display: flex;
+}
+.flex-box{
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    
+}
+.headings{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+} */

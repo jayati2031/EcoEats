@@ -3,12 +3,333 @@
 {% block title %}Add Food Item - EcoEats{% endblock %}
 
 {% block content %}
-<section class="form-container">
-    <h2>Add Food Item</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save</button>
-    </form>
-</section>
+<style>
+/* Add your provided CSS styles here */
+.product-form {
+  border-radius: 10px;
+  background-color: #3d4154;
+  display: flex;
+  max-width: 665px;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 22px 36px 44px;
+}
+
+@media (max-width: 991px) {
+  .product-form {
+    padding: 0 20px;
+  }
+}
+
+.form-row {
+  gap: 20px;
+  display: flex;
+}
+
+@media (max-width: 991px) {
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+}
+
+.form-column {
+  display: flex;
+  flex-direction: column;
+  line-height: normal;
+}
+
+.form-column-wide {
+  width: 61%;
+}
+
+.form-column-narrow {
+  width: 39%;
+}
+
+@media (max-width: 991px) {
+  .form-column {
+    width: 100%;
+  }
+}
+
+.form-group {
+  display: flex;
+  margin-top: 58px;
+  flex-grow: 1;
+  flex-direction: column;
+  align-items: start;
+  color: #fff;
+  font: 500 16px/1.5 Poppins, sans-serif;
+}
+
+@media (max-width: 991px) {
+  .form-group {
+    margin-top: 40px;
+  }
+}
+
+.form-input {
+  border-radius: 5px;
+  background-color: #252836;
+  align-self: stretch;
+  margin-top: 12px;
+  font-size: 12px;
+  color: #bdbdbd;
+  font-weight: 400;
+  padding: 10px 8px;
+  border: 1px solid #9f9f9f;
+}
+
+@media (max-width: 991px) {
+  .form-input {
+    padding-right: 20px;
+  }
+}
+
+.form-label {
+  margin-top: 26px;
+  color: white;
+}
+
+.category-group {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  font-family: Poppins, sans-serif;
+  line-height: 1.5;
+}
+
+@media (max-width: 991px) {
+  .category-group {
+    margin-top: 40px;
+  }
+}
+
+.category-icon {
+  border-radius: 50%;
+  align-self: end;
+  display: flex;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #fff;
+}
+
+.select-wrapper {
+  border-radius: 5px;
+  background-color: #252836;
+  display: flex;
+  margin-top: 12px;
+  gap: 20px;
+  font-size: 12px;
+  color: #bdbdbd;
+  font-weight: 400;
+  justify-content: space-between;
+  padding: 10px 11px;
+  border: 1px solid #9f9f9f;
+}
+
+.select-icon {
+  aspect-ratio: 1.86;
+  object-fit: contain;
+  object-position: center;
+  width: 13px;
+  margin: auto 0;
+}
+
+.description-input {
+  border-radius: 5px;
+  background-color: #252836;
+  margin-top: 12px;
+  color: #bdbdbd;
+  padding: 10px 8px 67px;
+  font: 400 12px/1.5 Poppins, sans-serif;
+  border: 1px solid #9f9f9f;
+}
+
+@media (max-width: 991px) {
+  .description-input {
+    max-width: 100%;
+    padding-right: 20px;
+  }
+}
+
+.form-section {
+  margin-top: 26px;
+}
+
+@media (max-width: 991px) {
+  .form-section {
+    max-width: 100%;
+  }
+}
+
+.form-row-split {
+  display: flex;
+  gap: 20px;
+  line-height: 1.5;
+  justify-content: space-between;
+}
+
+@media (max-width: 991px) {
+  .form-row-split {
+    margin-right: 10px;
+  }
+}
+
+.form-group-split {
+  display: flex;
+  flex-direction: column;
+}
+
+.date-input-wrapper {
+  border-radius: 5px;
+  background-color: #252836;
+  display: flex;
+  margin-top: 12px;
+  gap: 20px;
+  font-size: 12px;
+  color: #bdbdbd;
+  font-weight: 400;
+  justify-content: space-between;
+  padding: 10px 11px;
+  border: 1px solid #9f9f9f;
+}
+
+.date-icon {
+  aspect-ratio: 1;
+  object-fit: contain;
+  object-position: center;
+  width: 12px;
+  margin: auto 0;
+}
+
+.image-upload-wrapper {
+  border-radius: 5px;
+  background-color: #252836;
+  display: flex;
+  margin-top: 12px;
+  width: 182px;
+  max-width: 100%;
+  gap: 20px;
+  font-size: 12px;
+  color: #bdbdbd;
+  font-weight: 400;
+  line-height: 1.5;
+  justify-content: space-between;
+  padding: 10px 11px;
+  border: 1px solid #9f9f9f;
+}
+
+.upload-icon {
+  aspect-ratio: 1.08;
+  object-fit: contain;
+  object-position: center;
+  width: 13px;
+  margin: auto 0;
+}
+
+.save-button {
+  border-radius: 4px;
+  background-color: #ee2f2f;
+  align-self: end;
+  margin-top: 23px;
+  font-size: 16px;
+  color: #fff;
+  font-weight: 600;
+  white-space: nowrap;
+  text-align: center;
+  padding: 16px 51px;
+}
+
+@media (max-width: 991px) {
+  .save-button {
+    white-space: initial;
+    padding: 0 20px;
+  }
+}
+
+.priority-group {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  font-family: Poppins, sans-serif;
+  line-height: 1.5;
+}
+
+@media (max-width: 991px) {
+  .priority-group {
+    margin-top: 40px;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Remaining CSS omitted for brevity */
+</style>
+
+<form method="POST" class="product-form" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="form-column form-column-wide">
+        <div class="form-group">
+          <label for="id_name" class="form-label">Product Name</label>
+          {{ form.name }}
+          <label for="id_description" class="form-label">Description</label>
+        </div>
+      </div>
+      <div class="form-column form-column-narrow">
+        <div class="category-group">
+          <label for="id_category" class="form-label">Category</label>
+          <div class="select-wrapper">
+            {{ form.category }}
+          </div>
+        </div>
+      </div>
+    </div>
+    {{ form.description }}
+    <div class="form-section">
+      <div class="form-row">
+        <div class="form-column form-column-wide">
+          <div class="form-row-split">
+            <div class="form-group-split">
+              <label for="id_quantity" class="form-label">Quantity</label>
+              {{ form.quantity }}
+            </div>
+            <div class="form-group-split">
+              <label for="id_expiration_date" class="form-label">Expiration Date</label>
+              <div class="date-input-wrapper">
+                {{ form.expiration_date }}
+              </div>
+            </div>
+          </div>
+          <label for="productImage" class="form-label">Upload Product Image</label>
+          <div class="image-upload-wrapper">
+            <input type="file" id="productImage" accept="image/*" aria-label="Upload image">
+          </div>
+          <button type="submit" class="save-button">Save</button>
+        </div>
+        <div class="form-column form-column-narrow">
+          <div class="priority-group">
+            <label for="id_priority" class="form-label">Priority</label>
+            <div class="select-wrapper">
+              {{ form.priority }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  
 {% endblock %}

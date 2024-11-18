@@ -3,23 +3,163 @@
 {% block title %}Recipe Results{% endblock %}
 
 {% block content %}
+<style>
+
+.recipe-section {
+    border-radius: 16px;
+    background: var(--Base-Dark-Bg-1, #252836);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: Poppins, sans-serif;
+    padding: 40px;
+}
+
+@media (max-width: 991px) {
+    .recipe-section {
+        padding: 20px;
+    }
+}
+
+.section-title {
+    color: #fefefe;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.back-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    color: #ddd;
+    font-weight: 500;
+    margin-bottom: 32px;
+    text-decoration: none;
+}
+
+.recipe-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.recipe-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: #2c2f3f;
+    border-radius: 10px;
+    padding: 16px;
+    transition: transform 0.2s ease;
+}
+
+.recipe-card:hover {
+    transform: scale(1.02);
+}
+
+.recipe-image {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.recipe-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.recipe-title {
+    color: #fff;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.view-recipe-btn {
+    color: #ee2f2f;
+    border: 1px solid #ee2f2f;
+    background: none;
+    border-radius: 4px;
+    padding: 8px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.view-recipe-btn:hover {
+    background: #ee2f2f;
+    color: #fff;
+}
+
+.divider {
+    display: none; /* Hide dividers for cleaner design */
+}
+</style>
+
 <h2>Recipes Based on Selected Items</h2>
 
 {% if error %}
-    <p style="color: red;">{{ error }}</p>
+    <section class="recipe-section">
+        <h1 class="section-title">Recipe</h1>
+        <p style="color: red;">{{ error }}</p>
+        <a href="{% url 'recipes' %}" class="back-link">
+            <img
+                src="https://cdn.builder.io/api/v1/image/assets/TEMP/902f3ae4fd6930e29a6fd4d1b4e7d7844a7ad167ca20c20b8ea9e270dc524105?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c"
+                alt="Back icon"
+                class="back-icon"
+            />
+            <span>Back to Near to Expire Product Listing</span>
+        </a>
+    </section>
 {% elif recipes %}
-    <ul>
-        {% for recipe in recipes %}
-        <li>
-            <h3>{{ recipe.title }}</h3>
-            <img src="{{ recipe.image }}" alt="{{ recipe.title }}" width="150">
-            <a href="{% url 'recipe_detail' recipe.id %}" target="_blank">View Recipe Details</a>
-        </li>
-        {% endfor %}
-    </ul>
+    <section class="recipe-section">
+        <h1 class="section-title">Recipe</h1>
+        <a href="{% url 'recipes' %}" class="back-link">
+            <img
+                src="https://cdn.builder.io/api/v1/image/assets/TEMP/902f3ae4fd6930e29a6fd4d1b4e7d7844a7ad167ca20c20b8ea9e270dc524105?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c"
+                alt="Back icon"
+                class="back-icon"
+            />
+            <span>Back to Near to Expire Product Listing</span>
+        </a>
+        <div class="recipe-list">
+            {% for recipe in recipes %}
+            <article class="recipe-card">
+                <img
+                    src="{{ recipe.image }}"
+                    alt="{{ recipe.title }}"
+                    class="recipe-image"
+                />
+                <div class="recipe-details">
+                    <h2 class="recipe-title">{{ recipe.title }}</h2>
+                    <a href="{% url 'recipe_detail' recipe.id %}" target="_blank">
+                        <button class="view-recipe-btn">View Recipe</button>
+                    </a>
+                </div>
+            </article>
+            <hr class="divider" />
+            {% endfor %}
+        </div>
+    </section>
 {% else %}
-    <p>No recipes found!</p>
+    <section class="recipe-section">
+        <h1 class="section-title">Recipe</h1>
+        <p>No recipes found!</p>
+        <a href="{% url 'recipes' %}" class="back-link">
+            <img
+                src="https://cdn.builder.io/api/v1/image/assets/TEMP/902f3ae4fd6930e29a6fd4d1b4e7d7844a7ad167ca20c20b8ea9e270dc524105?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c"
+                alt="Back icon"
+                class="back-icon"
+            />
+            <span>Back to Near to Expire Product Listing</span>
+        </a>
+    </section>
 {% endif %}
 
-<a href="{% url 'recipes' %}">Back to Food Items</a>
 {% endblock %}
