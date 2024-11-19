@@ -8,7 +8,7 @@ CATEGORY_CHOICES = [
     ('fruit', 'Fruit'),
     ('dairy', 'Dairy'),
     ('meat', 'Meat'),
-    ('Others', 'Others'),
+    ('others', 'Others'),
 ]
 
 PRIORITY_LEVELS = [

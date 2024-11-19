@@ -37,32 +37,48 @@
               </div>
             </div>
 
-          <form class="signup-form" method="POST">
+            <form class="signup-form" method="POST">
               {% csrf_token %}
-            <div class="input-field">
-              <label for="username-input" class="visually-hidden">Enter your username</label>
-              <input type="text" name="{{ form.username.name }}" value="{{ form.username.value }}" class="input-label" placeholder="Username">
-              <img class="field-icon" src="https://cdn.builder.io/api/v1/image/assets/TEMP/36de7754a39649843d70b2518eabc06f9a63db89d5acb01190e2ca7d9c8f92de?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c" alt="" loading="lazy">
-            </div>
+              
+              <div class="input-field">
+                  <label for="username-input" class="visually-hidden">Enter your username</label>
+                  <input type="text" name="{{ form.username.name }}" value="{{ form.username.value }}" class="input-label" placeholder="Username">
+                  <img class="field-icon" src="https://cdn.builder.io/api/v1/image/assets/TEMP/36de7754a39649843d70b2518eabc06f9a63db89d5acb01190e2ca7d9c8f92de?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c" alt="" loading="lazy">
+                
+              </div>
+  
+              <div class="input-field">
+                  <label for="email-input" class="visually-hidden">Enter your Email Id</label>
+                  <input type="email" name="{{ form.email.name }}" value="{{ form.email.value }}" class="input-label" placeholder="Email Id" required>
+                  <img class="field-icon" src="https://cdn.builder.io/api/v1/image/assets/TEMP/36de7754a39649843d70b2518eabc06f9a63db89d5acb01190e2ca7d9c8f92de?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c" alt="" loading="lazy">
+                 
+              </div>
+  
+              <div class="input-field">
+                  <label for="password1-input" class="visually-hidden">Enter your password</label>
+                  <input type="password" name="{{ form.password1.name }}" class="input-label" placeholder="Enter your password">
+                  <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/d4b1f076037699a184d800bc5d02bdd8eb20d6758d4d4b2b30502445c3f4ac36?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c" alt="" class="input-icon">
+                  
+              </div>
+  
+              <div class="input-field">
+                  <label for="password2-input" class="visually-hidden">Re-enter your password</label>
+                  <input type="password" name="{{ form.password2.name }}" class="input-label" placeholder="Re-enter your password">
+                  <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/d4b1f076037699a184d800bc5d02bdd8eb20d6758d4d4b2b30502445c3f4ac36?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c" alt="" class="input-icon">
+                 
+              </div>
+  
+              {% if messages %}
+              <ul class="error-list">
+                  {% for message in messages %}
+                      <li class="error">{{ message }}</li>
+                  {% endfor %}
+              </ul>
+              {% endif %}
 
-            <div class="input-field">
-              <label for="email-input" class="visually-hidden">Enter your Email Id</label>
-              <input type="email" name="{{ form.email.name }}" value="{{ form.email.value }}" class="input-label" placeholder="Email Id" required>
-              <img class="field-icon" src="https://cdn.builder.io/api/v1/image/assets/TEMP/36de7754a39649843d70b2518eabc06f9a63db89d5acb01190e2ca7d9c8f92de?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c" alt="" loading="lazy">
-          </div>
-            <div class="input-field">
-              <label for="password1-input" class="visually-hidden">Enter your password</label>
-              <input type="password" name="{{ form.password1.name }}" value="{{ form.password1.value }}" class="input-label" placeholder="Password">
-              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/d4b1f076037699a184d800bc5d02bdd8eb20d6758d4d4b2b30502445c3f4ac36?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c" alt="" class="input-icon">
-            </div>
-            <div class="input-field">
-              <label for="password2-input" class="visually-hidden">Re-enter your password</label>
-              <input type="password" name="{{ form.password2.name }}" value="{{ form.password2.value }}" class="input-label" placeholder="Password">
-              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/d4b1f076037699a184d800bc5d02bdd8eb20d6758d4d4b2b30502445c3f4ac36?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c" alt="" class="input-icon">
-            </div>
-            <div class="get-started-container">
-              <button type="submit" class="get-started-button">Get Started</button>
-            </div>
+              <div class="get-started-container">
+                  <button type="submit" class="get-started-button">Get Started</button>
+              </div>
           </form>
       </div>
     </div>

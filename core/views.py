@@ -4,10 +4,10 @@ from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView, DeleteView
-
+from .utils import send_email_notification 
 from django.shortcuts import render, redirect
 from .forms import FoodItemForm, RecipeForm
-from .models import FoodItem, Recipe, UserActivity
+from .models import FoodItem, Recipe, UserActivity, Notification
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .spoonacular_service import get_recipes_by_ingredients, get_recipe_details
@@ -20,31 +20,74 @@ from django.conf import settings
 from django.utils.timezone import now
 
 # Register view
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from .forms import CustomUserCreationForm
+
 def register(request):
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
+        
+        # Check if the form is valid
         if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            email = form.cleaned_data.get('email')
-            # Profile.objects.create(user=user)
+            try:
+                # Save the user and get the username and email
+                user = form.save()
+                username = form.cleaned_data.get('username')
+                email = form.cleaned_data.get('email')
 
-            messages.success(request, f'Account created for {username}!')
-            return redirect('login')
+                 # Ensure the email is being saved properly
+                if email:
+                    user.email = email
+                    user.save()
+                
+                # Display success message
+                messages.success(request, f'Account created for {username}!')
+
+                # Redirect to the login page
+                return redirect('login')
+            except Exception as e:
+                # Log the error and display an error message
+                print(f"Error while registering the user: {e}")
+                messages.error(request, "An error occurred while creating your account. Please try again.")
+        else:
+            # If form is not valid, display the form errors
+            print(f"Form errors: {form.errors}")
+            for field, error_list in form.errors.items():
+                for error in error_list:
+                    messages.error(request, f"Error in {field}: {error}")
+
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
+
     return render(request, 'register.html', {'form': form})
 
-# Login view
+
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login, authenticate
+from django.shortcuts import render, redirect
+from django.contrib import messages
+
 def login_view(request):
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
+            
             user = form.get_user()
             login(request, user)
-            return redirect('dashboard')  # Redirect to a user-specific page, like a dashboard
+            return redirect('dashboard')  
+        else:
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            
+            user = authenticate(request, username=username, password=password)
+            if user is None:
+                messages.error(request, "Username and password do not match.")
+            else:
+                messages.error(request, "There was an error with your login credentials.")
     else:
         form = AuthenticationForm()
+
     return render(request, 'login.html', {'form': form})
 
 # Logout view
@@ -76,7 +119,7 @@ def dashboard(request):
 #     return render(request, 'food_item_list.html', {'food_items': food_items})
 
 def food_item_list(request):
-    food_items = request.user.food_items.all()
+    food_items = FoodItem.objects.all()
 
     categorized_food_items = {}
     for food_item in food_items:
@@ -144,7 +187,7 @@ def recipes(request):
         return render(request, 'recipe_results.html', {'recipes': recipe_results})
 
     # Fetch the top 10 food items nearing expiry
-    food_items = FoodItem.objects.filter(user=request.user, expiration_date__isnull=False).order_by('expiration_date')[:10]
+    food_items = FoodItem.objects.filter(expiration_date__isnull=False).order_by('expiration_date')[:10]
     return render(request, 'recipe_list.html', {'food_items': food_items})
 
 @login_required(login_url='/login')
@@ -218,7 +261,48 @@ def user_history(request):
     })
 
 @receiver(post_save, sender=FoodItem)
-def send_expiring_soon_notification(sender, instance, created, **kwargs):
+def check_food_item_expiry(sender, instance, created, **kwargs):
+    try:
+        if created:
+            print(f"DEBUG: New FoodItem created: {instance.name} (Expiration: {instance.expiration_date})")
+        
+        if instance.is_expiring_soon():
+            print(f"DEBUG: FoodItem '{instance.name}' is expiring soon.")
+
+            # Check and print user email
+            user_email = instance.user.email
+            if not user_email:
+                print(f"ERROR: User {instance.user.username} does not have an email address set.")
+                return  # Skip sending email
+
+            print(f"DEBUG: User email for FoodItem '{instance.name}': {user_email}")
+
+            # Send email
+            subject = f"Food Expiry Alert: {instance.name}"
+            message = (
+                f"Hello {instance.user.username},\n\n"
+                f"Your food item '{instance.name}' is expiring soon! "
+                f"It will expire on {instance.expiration_date}.\n\n"
+                "Please use it soon or consider donating it to avoid waste.\n\n"
+                "Regards,\nEcoEats Team"
+            )
+            recipient_list = [user_email]
+
+            print(f"DEBUG: Preparing to send email to {recipient_list}")
+            send_email_notification(subject, message, recipient_list)
+
+            # Create Notification
+            Notification.objects.create(
+                user=instance.user,
+                food_item=instance,
+                message=f"Your food item '{instance.name}' is expiring soon! Expiry date: {instance.expiration_date}",
+            )
+            print(f"DEBUG: Notification created for {instance.name}.")
+        else:
+            print(f"DEBUG: FoodItem '{instance.name}' is not expiring soon.")
+    except Exception as e:
+        print(f"ERROR: An error occurred in the check_food_item_expiry signal: {e}")
+
     if created:
         # Check if the food item is expiring soon (within 3 days)
         if instance.is_expiring_soon():

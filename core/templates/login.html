@@ -43,26 +43,46 @@
         {% csrf_token %}
         
         <div class="input-field">
-          <label for="username-input" class="visually-hidden">Enter your username</label>
-          <input type="text" name="{{ form.username.name }}" value="{{ form.username.value }}" class="input-label">
-          <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/36de7754a39649843d70b2518eabc06f9a63db89d5acb01190e2ca7d9c8f92de?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c" alt="" class="input-icon">
+            <label for="username-input" class="visually-hidden">Enter your username</label>
+            <input type="text" name="{{ form.username.name }}" value="{{ form.username.value }}" class="input-label" placeholder="Enter your username">
+            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/36de7754a39649843d70b2518eabc06f9a63db89d5acb01190e2ca7d9c8f92de?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c" alt="" class="input-icon">
+            
         </div>
-      
+        
         <div class="input-field">
-          <label for="password-input" class="visually-hidden">Enter your password</label>
-          <input type="password" name="{{ form.password.name }}" value="{{ form.password.value }}" class="input-label">
-          <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/d4b1f076037699a184d800bc5d02bdd8eb20d6758d4d4b2b30502445c3f4ac36?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c" alt="" class="input-icon">
+            <label for="password-input" class="visually-hidden">Enter your password</label>
+            <input type="password" name="{{ form.password.name }}" class="input-label" placeholder="Enter your password">
+            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/d4b1f076037699a184d800bc5d02bdd8eb20d6758d4d4b2b30502445c3f4ac36?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c" alt="" class="input-icon">
+          
         </div>
-      
+
+    {% if messages %}
+    <ul class="error-list">
+        {% for message in messages %}
+            <li class="error">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
         <div class="get-started-container">
-          <button type="submit" class="get-started-button">Get Started</button>
+            <button type="submit" class="get-started-button">Get Started</button>
         </div>
-      </form>
+    </form>
+    
     </div>
   </div>
 </section>
 
 <style>
+
+.error-list {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.error {
+    list-style-type: none;
+}
   /* Ensure the page doesn't scroll */
 html, body {
   height: 100%; /* Ensure the height is constrained to the viewport */
