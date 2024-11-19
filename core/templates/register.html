@@ -42,14 +42,14 @@
               
               <div class="input-field">
                   <label for="username-input" class="visually-hidden">Enter your username</label>
-                  <input type="text" name="{{ form.username.name }}" value="{{ form.username.value }}" class="input-label" placeholder="Username">
+                  <input type="text" name="{{ form.username.name }}" value="{{ form.username.value|default:''}}" class="input-label" placeholder="Username">
                   <img class="field-icon" src="https://cdn.builder.io/api/v1/image/assets/TEMP/36de7754a39649843d70b2518eabc06f9a63db89d5acb01190e2ca7d9c8f92de?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c" alt="" loading="lazy">
                 
               </div>
   
               <div class="input-field">
                   <label for="email-input" class="visually-hidden">Enter your Email Id</label>
-                  <input type="email" name="{{ form.email.name }}" value="{{ form.email.value }}" class="input-label" placeholder="Email Id" required>
+                  <input type="email" name="{{ form.email.name }}" value="{{ form.email.value|default:'' }}" class="input-label" placeholder="Email Id" required>
                   <img class="field-icon" src="https://cdn.builder.io/api/v1/image/assets/TEMP/36de7754a39649843d70b2518eabc06f9a63db89d5acb01190e2ca7d9c8f92de?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c" alt="" loading="lazy">
                  
               </div>
@@ -69,7 +69,7 @@
               </div>
   
               {% if messages %}
-              <ul class="error-list">
+              <ul class="error-list" style="color: red">
                   {% for message in messages %}
                       <li class="error">{{ message }}</li>
                   {% endfor %}
@@ -177,7 +177,6 @@ html, body {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  margin: 15px auto;
 }
 
 .welcome-title {
@@ -197,7 +196,6 @@ html, body {
   color: #EDEDED;
     font-size: 22px;
     font-weight: 500;
-    margin-top: 35px;
     /* text-align: center; */
     margin-left: auto;
     margin-right: auto;
@@ -259,7 +257,8 @@ html, body {
   color: #fff;
   text-align: right;
   font: 700 18px/1 Lato, sans-serif;
-  margin-top: 45px;
+    margin-top: 10px;
+  margin-bottom: 30px;
 }
 
 .get-started-button {
@@ -295,7 +294,7 @@ html, body {
 }
 
 .input-field:first-of-type {
-  margin-top: 52px;
+  margin-top: 20px;
 }
 
 .input-label {

@@ -1,11 +1,7 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
-from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView, DeleteView
-from .utils import send_email_notification 
-from django.shortcuts import render, redirect
+from .utils import send_email_notification
 from .forms import FoodItemForm, RecipeForm
 from .models import FoodItem, Recipe, UserActivity, Notification
 from django.contrib.auth.decorators import login_required
@@ -18,6 +14,9 @@ from django.dispatch import receiver
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils.timezone import now
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login, authenticate
+from django.db.models import Count, Q
 
 # Register view
 from django.contrib import messages
@@ -62,12 +61,6 @@ def register(request):
 
     return render(request, 'register.html', {'form': form})
 
-
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login, authenticate
-from django.shortcuts import render, redirect
-from django.contrib import messages
-
 def login_view(request):
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
@@ -94,28 +87,6 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
-
-@login_required(login_url='/login')
-def dashboard(request):
-    # Get all the food items related to the logged-in user
-    food_items = request.user.food_items.all()
-    
-    # Get the recipes related to the logged-in user
-    recipes = request.user.recipes.all()
-
-    # Filter food items that are expiring soon (within the next 3 days)
-    expiring_soon = [item for item in food_items if item.is_expiring_soon()]
-
-    # Pass the expiring_soon list to the template
-    return render(request, 'dashboard.html', {
-        'food_items': food_items,
-        'recipes': recipes,
-        'expiring_soon': expiring_soon,  # Pass the expiring_soon list to the template
-    })
-
-
-from django.db.models import Count, Q
-from django.utils.timezone import now
 
 @login_required(login_url='/login')
 def dashboard(request):
@@ -146,7 +117,6 @@ def dashboard(request):
         'expiring_soon': expiring_soon, 
     }
     return render(request, 'dashboard.html', context)
-
 
 @login_required(login_url='/login')
 # def food_item_list(request):
@@ -247,8 +217,8 @@ def recipe_detail(request, recipe_id):
 
 @login_required
 def recipe_list(request):
-    recipes = request.user.recipes.all()
-    return render(request, 'recipe_list.html', {'recipes': recipes})
+    user_recipe_list = request.user.recipes.all()
+    return render(request, 'recipe_list.html', {'recipes': user_recipe_list})
 
 @login_required(login_url='/login')
 def add_recipe(request):
@@ -267,7 +237,7 @@ def add_recipe(request):
     return render(request, 'add_recipe.html', {'form': form})
 
 def export_food_items(request):
-    food_items = FoodItem.objects.all()
+    food_items = request.user.food_items.all()
 
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="food_items.csv"'

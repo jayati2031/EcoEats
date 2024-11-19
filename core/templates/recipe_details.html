@@ -161,11 +161,7 @@
         <div class="divider"></div>
         <div class="instructions-section">
             <h2 style="color: #ee2f2f;">Instructions</h2>
-            <ol>
-                {% for step in recipe.instructions %}
-                    <li>{{ step }}</li>
-                {% endfor %}
-            </ol>
+            {{ recipe.instructions|safe }}
         </div>
     </div>
     

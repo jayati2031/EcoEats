@@ -44,7 +44,7 @@
         
         <div class="input-field">
             <label for="username-input" class="visually-hidden">Enter your username</label>
-            <input type="text" name="{{ form.username.name }}" value="{{ form.username.value }}" class="input-label" placeholder="Enter your username">
+            <input type="text" name="{{ form.username.name }}" value="{{ form.username.value|default:''}}" class="input-label" placeholder="Enter your username">
             <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/36de7754a39649843d70b2518eabc06f9a63db89d5acb01190e2ca7d9c8f92de?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c" alt="" class="input-icon">
             
         </div>
