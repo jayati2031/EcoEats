@@ -13,6 +13,11 @@ from django.contrib import messages
 from .spoonacular_service import get_recipes_by_ingredients, get_recipe_details
 import csv
 from django.http import HttpResponse
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils.timezone import now
 
 # Register view
 def register(request):
@@ -21,6 +26,9 @@ def register(request):
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
+            email = form.cleaned_data.get('email')
+            # Profile.objects.create(user=user)
+
             messages.success(request, f'Account created for {username}!')
             return redirect('login')
     else:
@@ -44,12 +52,23 @@ def logout_view(request):
     logout(request)
     return redirect('login')
 
-
 @login_required(login_url='/login')
 def dashboard(request):
+    # Get all the food items related to the logged-in user
     food_items = request.user.food_items.all()
+    
+    # Get the recipes related to the logged-in user
     recipes = request.user.recipes.all()
-    return render(request, 'dashboard.html', {'food_items': food_items, 'recipes': recipes})
+
+    # Filter food items that are expiring soon (within the next 3 days)
+    expiring_soon = [item for item in food_items if item.is_expiring_soon()]
+
+    # Pass the expiring_soon list to the template
+    return render(request, 'dashboard.html', {
+        'food_items': food_items,
+        'recipes': recipes,
+        'expiring_soon': expiring_soon,  # Pass the expiring_soon list to the template
+    })
 
 @login_required(login_url='/login')
 # def food_item_list(request):
@@ -197,3 +216,31 @@ def user_history(request):
         'activities': activities,
         'visit_history': visit_history,
     })
+
+@receiver(post_save, sender=FoodItem)
+def send_expiring_soon_notification(sender, instance, created, **kwargs):
+    if created:
+        # Check if the food item is expiring soon (within 3 days)
+        if instance.is_expiring_soon():
+            # Sending an email notification
+            subject = f"Food Expiry Alert: {instance.name}"
+            message = (
+                f"Hello {instance.user.username},\n\n"
+                f"Your food item '{instance.name}' is expiring soon! "
+                f"It will expire on {instance.expiration_date}.\n\n"
+                "Please use it soon or consider donating it to avoid waste.\n\n"
+                "Regards,\nEcoEats Team"
+            )
+            recipient_list = [instance.user.email]
+
+            # Send email notification to the user
+            try:
+                send_mail(
+                    subject=subject,
+                    message=message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=recipient_list,
+                )
+                print(f"Notification sent to {instance.user.email} for {instance.name}")
+            except Exception as e:
+                print(f"Error sending email: {e}")
