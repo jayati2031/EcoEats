@@ -3,7 +3,7 @@
 {% block title %}{{ recipe.title }}{% endblock %}
 
 {% block content %}
-
+<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet"> -->
 <style>
     body {
         margin: 0;
@@ -13,8 +13,8 @@
     }
     
     .recipe-section {
-        padding: 40px 20px;
-        max-width: 900px;
+        padding: 20px 10px;
+        max-width: 100%;
         margin: auto;
     }
     
@@ -23,27 +23,27 @@
         color: #ddd;
         font-size: 18px;
         text-decoration: none;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
     }
     
     .recipe-header {
         display: flex;
         align-items: center;
-        gap: 20px;
+        gap: 30px;
         margin-bottom: 30px;
     }
     
     .recipe-image-wrapper {
-        flex: 0 0 150px;
+        flex: 0 0 200px;
         overflow: hidden;
-        border-radius: 10px;
+        /* border-radius: 10px; */
     }
     
     .recipe-image {
         display: block;
         width: 100%;
         height: auto;
-        border-radius: 10px;
+        border-radius: 5px;
     }
     
     .recipe-details {
@@ -56,16 +56,22 @@
     }
     
     .view-source {
-        font-size: 16px;
+        font-size: 14px;
         color: #ee2f2f;
         text-decoration: none;
         border: 1px solid #ee2f2f;
-        padding: 5px 10px;
-        border-radius: 5px;
+        padding: 8px 20px;
+        border-radius: 4px;
         display: inline-block;
         margin-top: 10px;
+        font-weight: 600;
     }
-    
+
+    .view-source:hover {
+        background: #ee2f2f;
+        color: #fff;
+    }
+
     .recipe-main {
         display: flex;
         justify-content: space-between;
@@ -85,15 +91,51 @@
         padding-left: 20px;
         line-height: 1.8;
     }
+
+    .ol-list {
+        margin-left: -22px;
+        color: #ffffff;
+        font-size: large;
+    }
     
     .divider {
         width: 2px;
-        background-color: #898989;
-        height: auto;
+        /* background-color: #ffffff; */
+        margin: 0;
+        margin-right: 40px;
+        border-left: 2px solid whitesmoke;
+        height: 500px;
+    }
+
+
+
+.ingredients-section,
+.instructions-section {
+    flex: 1;
+}
+
+
+    
+    .instructions-section ol {
+        list-style: none;
+        padding-left: 0;
     }
     
+    .instructions-section ol li {
+        counter-increment: step-counter;
+        margin-bottom: 10px;
+        display: block;
+    }
+    
+    .instructions-section ol li::before {
+        content: counter(step-counter) ". ";
+        font-weight: bold;
+        margin-right: 5px;
+    }
 </style>
+
 <section class="recipe-section">
+    <h1 class="section-title">Recipe</h1>
     <a href="{% url 'recipes' %}" class="back-link">
         <span>&lt; Back to Recipe Listing</span>
     </a>
@@ -109,18 +151,24 @@
     <div class="recipe-main">
         <div class="ingredients-section">
             <h2 style="color: #ee2f2f;">Ingredients</h2>
-            <ul>
+            <ol class="ol-list">
                 {% for ingredient in recipe.ingredients %}
-                    <li>{{ ingredient.name }} ({{ ingredient.amount }} {{ ingredient.unit }})</li>
+                    <li style="margin-bottom: 10px; line-height: 1.8;">{{ ingredient.name }} ({{ ingredient.amount }} {{ ingredient.unit }})</li>
                 {% endfor %}
-            </ul>
+            </ol>
         </div>
+        <!-- Vertical divider here -->
         <div class="divider"></div>
         <div class="instructions-section">
-            <h2 style="color: #ee2f2f;"> Instructions</h2>
-            <p>{{ recipe.instructions }}</p>
+            <h2 style="color: #ee2f2f;">Instructions</h2>
+            <ol>
+                {% for step in recipe.instructions %}
+                    <li>{{ step }}</li>
+                {% endfor %}
+            </ol>
         </div>
     </div>
+    
 </section>
 
 {% if error %}

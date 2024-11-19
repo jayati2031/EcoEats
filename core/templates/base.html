@@ -12,13 +12,13 @@
         background-image: url("{% static 'images/background.jpg' %}");
     }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <style>
         /* Base styles */
 body {
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(to bottom, #e6f7e9, #d0f0c0);
     color: #252836;
     margin: 0;
     padding: 0;
@@ -70,17 +70,17 @@ nav{
 
 /* Buttons */
 button {
-    background: linear-gradient(to right, #38a169, #2f855a);
+    background-color: #C6373C;
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 10px 20px; 
     border-radius: 5px;
     cursor: pointer;
     transition: 0.3s;
 }
 
 button:hover {
-    background: linear-gradient(to right, #2f855a, #276749);
+    background: linear-gradient(to right, #FF474D, #C6373C);
 }
 h1,h2,h3,h4,h5{
     color: #FEFEFE;
@@ -114,7 +114,7 @@ form input:focus, form textarea:focus, form select:focus {
 }
 
 /* Lists */
-ul {
+/* ul {
     list-style: none;
     padding: 0;
 }
@@ -125,7 +125,7 @@ ul li {
     padding: 10px 15px;
     border-left: 5px solid #38a169;
     border-radius: 5px;
-}
+} */
 
 /* Footer */
 footer {
@@ -252,6 +252,11 @@ svg{
 svg:hover path{
     fill: red;
 }
+
+svg:active path {
+    fill: red;
+}
+
 .logo svg:hover path{
     fill: #D0D0D0;
 }
@@ -298,7 +303,7 @@ main{
     
                 </a>
                 <a href="/">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="27" viewBox="0 0 24 27" fill="none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="27" viewBox="0 0 24 27" fill="none" class="clickable">
                         <path d="M1.33333 15.0388H9.33333C10.0667 15.0388 10.6667 14.3713 10.6667 13.5553V1.68738C10.6667 0.871461 10.0667 0.203888 9.33333 0.203888H1.33333C0.6 0.203888 0 0.871461 0 1.68738V13.5553C0 14.3713 0.6 15.0388 1.33333 15.0388ZM1.33333 26.9068H9.33333C10.0667 26.9068 10.6667 26.2392 10.6667 25.4233V19.4893C10.6667 18.6734 10.0667 18.0058 9.33333 18.0058H1.33333C0.6 18.0058 0 18.6734 0 19.4893V25.4233C0 26.2392 0.6 26.9068 1.33333 26.9068ZM14.6667 26.9068H22.6667C23.4 26.9068 24 26.2392 24 25.4233V13.5553C24 12.7394 23.4 12.0718 22.6667 12.0718H14.6667C13.9333 12.0718 13.3333 12.7394 13.3333 13.5553V25.4233C13.3333 26.2392 13.9333 26.9068 14.6667 26.9068ZM13.3333 1.68738V7.62136C13.3333 8.43729 13.9333 9.10486 14.6667 9.10486H22.6667C23.4 9.10486 24 8.43729 24 7.62136V1.68738C24 0.871461 23.4 0.203888 22.6667 0.203888H14.6667C13.9333 0.203888 13.3333 0.871461 13.3333 1.68738Z" fill="#D0D0D0"/>
                         </svg>
                 </a>
@@ -327,7 +332,6 @@ main{
             
         </div>
     </div>
-    
     
 </body>
 </html>

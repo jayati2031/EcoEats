@@ -3,7 +3,6 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 from .models import FoodItem, Recipe
 
-
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User
@@ -22,6 +21,7 @@ class CustomUserCreationForm(UserCreationForm):
             raise forms.ValidationError("The two password fields must match.")
         return password2
 
+
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
@@ -29,6 +29,9 @@ class UserProfileForm(forms.ModelForm):
 
 
 class FoodItemForm(forms.ModelForm):
+    expiration_date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'})  # This creates a date picker in the form
+    )
     class Meta:
         model = FoodItem
         fields = ['name', 'description', 'category', 'quantity', 'expiration_date', 'priority', 'refrigerated']

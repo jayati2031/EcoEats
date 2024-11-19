@@ -113,13 +113,48 @@ def dashboard(request):
         'expiring_soon': expiring_soon,  # Pass the expiring_soon list to the template
     })
 
+
+from django.db.models import Count, Q
+from django.utils.timezone import now
+
+@login_required(login_url='/login')
+def dashboard(request):
+    # Food items
+    food_items = request.user.food_items.all()
+
+    # Expired vs. Non-expired
+    expired_count = food_items.filter(expiration_date__lt=now().date()).count()
+    non_expired_count = food_items.filter(expiration_date__gte=now().date()).count()
+    expiring_soon = [item for item in food_items if item.is_expiring_soon()]
+
+    # Priority breakdown
+    priority_data = (
+        food_items.values('priority')
+        .annotate(count=Count('id'))
+        .order_by('priority')
+    )
+
+    # Recipes
+    recipes = request.user.recipes.all()
+
+    context = {
+        'food_items': food_items,
+        'recipes': recipes,
+        'expired_count': expired_count,
+        'non_expired_count': non_expired_count,
+        'priority_data': list(priority_data), 
+        'expiring_soon': expiring_soon, 
+    }
+    return render(request, 'dashboard.html', context)
+
+
 @login_required(login_url='/login')
 # def food_item_list(request):
 #     food_items = request.user.food_items.all()
 #     return render(request, 'food_item_list.html', {'food_items': food_items})
 
 def food_item_list(request):
-    food_items = FoodItem.objects.all()
+    food_items = request.user.food_items.all()
 
     categorized_food_items = {}
     for food_item in food_items:
@@ -177,17 +212,29 @@ def recipes(request):
     if request.method == "POST":
         # Get selected food items from the form
         selected_items = request.POST.getlist('selected_items')
-        if not selected_items:
-            return render(request, 'recipe_list.html', {'error': 'No items selected!', 'recipes': []})
+        extra_ingredients = request.POST.get('extra_ingredients', '').strip()
 
-        ingredients = ",".join(selected_items)
+        # Combine selected items and extra ingredients
+        all_ingredients = selected_items
+        if extra_ingredients:
+            # Split the extra ingredients by commas and strip whitespace
+            all_ingredients.extend([ingredient.strip() for ingredient in extra_ingredients.split(',') if ingredient.strip()])
+
+        if not all_ingredients:
+            return render(request, 'recipe_list.html', {
+                'error': 'No items or ingredients selected!',
+                'recipes': []
+            })
+
+        # Join all ingredients into a single string for the API
+        ingredients = ",".join(all_ingredients)
 
         # Call the Spoonacular API to fetch recipes
         recipe_results = get_recipes_by_ingredients(ingredients)
         return render(request, 'recipe_results.html', {'recipes': recipe_results})
 
     # Fetch the top 10 food items nearing expiry
-    food_items = FoodItem.objects.filter(expiration_date__isnull=False).order_by('expiration_date')[:10]
+    food_items = FoodItem.objects.filter(user=request.user, expiration_date__isnull=False).order_by('expiration_date')[:10]
     return render(request, 'recipe_list.html', {'food_items': food_items})
 
 @login_required(login_url='/login')

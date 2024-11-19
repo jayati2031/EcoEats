@@ -6,31 +6,90 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 <section class="flex overflow-hidden flex-col px-20 pt-11 pb-96 max-md:px-5 max-md:pb-24" style="background-color: #252836;">
   <header class="flex flex-wrap gap-5 justify-between self-end w-full max-w-[984px] max-md:max-w-full">
-    <h1 class="my-auto text-3xl font-bold tracking-widest text-white">Recipes</h1>
-    <button class="flex overflow-hidden gap-4 items-center p-3.5 text-xl font-medium tracking-wider rounded shadow-[4px_3px_5px_rgba(0,0,0,0.14)]" style="background-color: #353849; color: #96979d;">
-      <span class="self-stretch my-auto">Make Recipe</span>
-      <img loading="lazy" src="https://cdn.builder.io/api/v1/image/assets/TEMP/a3b83e6e6f5ebbae1d8c72fdc0c02225111fedba2f8a51fe2718b5b34c8cf912?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c" class="object-contain shrink-0 self-stretch my-auto w-6 aspect-square" alt="Make Recipe icon" />
-    </button>
+    <h1 class="my-auto text-3xl font-bold tracking-widest text-white">Recipe</h1>
   </header>
 
-  <h2 class="self-start mt-4 text-xl font-medium font-semibold tracking-wider text-white">Near to Expire Products</h2>
-  <form method="POST" class="w-full max-w-full mt-8 p-0" style="background-color: #252836;">
+  <h2 class="self-start mt-5 text-xl font-medium font-semibold tracking-wider text-white">Near to Expire Products</h2>
+  <form method="POST" class="w-full max-w-full mt-8 p-0 shadow-none" style="background-color: #252836;">
     {% csrf_token %}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 w-full" style="color: #96979d;">
       {% for item in food_items %}
-      <article class="flex overflow-hidden flex-col gap-4 px-5 py-6 rounded shadow-[4px_3px_5px_rgba(0,0,0,0.14)]" style="background-color: #3d4154;">
-        <div class="flex items-start">
-          <input type="checkbox" name="selected_items" value="{{ item.name }}" class="mr-2">
+      <article 
+        class="flex overflow-hidden flex-col gap-4 px-5 py-6 rounded-lg article-item" 
+        style="background-color: #3d4154; color: #96979d;">
+        <div class="flex items-start justify-between">
           <div class="flex flex-col">
             <h3 class="text-xl font-medium tracking-wider">{{ item.name }}</h3>
-            <p class="mt-2 text-sm tracking-wide leading-none">Expires on: {{ item.expiration_date }}</p>
+            <p class="mt-2 mb-2 text-sm italic tracking-wide leading-none">Expires on: {{ item.expiration_date }}</p>
           </div>
+          <!-- Checkbox is hidden and linked to the image -->
+          <input type="checkbox" name="selected_items" value="{{ item.name }}" id="checkbox-{{ forloop.counter }}" class="hidden">
+          <label for="checkbox-{{ forloop.counter }}" class="relative">
+            <figure class="flex flex-col justify-center items-center px-1.5 w-[50px] h-[50px] bg-transparent rounded-full">
+              <img loading="lazy" 
+                   src="https://cdn.builder.io/api/v1/image/assets/TEMP/9dc81aae6ad6e719a8d6ea4a221c712b2aeb146129db9b46f8b10b27095d3833?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c" 
+                   class="object-contain w-full aspect-[1.33] label-image" 
+                   alt="{{ item.name }} icon" />
+            </figure>
+          </label>
         </div>
-        <img loading="lazy" src="https://cdn.builder.io/api/v1/image/assets/TEMP/9dc81aae6ad6e719a8d6ea4a221c712b2aeb146129db9b46f8b10b27095d3833?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c" class="object-contain shrink-0 self-center aspect-square w-[50px]" alt="{{ item.name }} icon" />
       </article>
       {% endfor %}
     </div>
-    <button type="submit" class="mt-5 px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700">Get Recipes</button>
+
+    <!-- Extra Ingredients Input -->
+    <div class="mt-8">
+      <label for="extra-ingredients" class="block text-white font-medium tracking-wider">Add Extra Ingredients:</label>
+      <textarea
+        name="extra_ingredients"
+        id="extra-ingredients"
+        rows="3"
+        class="mt-2 p-3 w-full rounded-lg shadow-lg text-sm tracking-wide focus:outline-none"
+        placeholder="Enter ingredients separated by commas..."
+        style="background-color: #3d4154; color: #96979d;"></textarea>
+    </div>
+
+    <!-- Get Recipes Button -->
+    <div class="flex mt-12">
+      <button type="submit" 
+              class="flex overflow-hidden gap-4 items-center p-3.5 text-xl font-medium tracking-wider rounded-lg hover:bg-[#f46262] hover:text-white transition duration-300" 
+              style="background-color: #353849; color: #96979d;">
+        <span class="self-stretch my-auto">Make Recipe</span>
+        <img loading="lazy" 
+             src="https://cdn.builder.io/api/v1/image/assets/TEMP/a3b83e6e6f5ebbae1d8c72fdc0c02225111fedba2f8a51fe2718b5b34c8cf912?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c" 
+             class="object-contain shrink-0 self-stretch my-auto w-6 aspect-square" 
+             alt="Make Recipe icon" />
+      </button>
+    </div>
   </form>
 </section>
+
+<!-- Add the script for interactivity -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const articles = document.querySelectorAll('.article-item');
+
+    articles.forEach(article => {
+      const checkbox = article.querySelector('input[type="checkbox"]');
+      const labelImage = article.querySelector('.label-image');
+      const labelFigure = article.querySelector('figure');
+
+      checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
+          article.style.backgroundColor = '#f46262';
+          article.style.color = '#ffffff';
+          labelImage.src = "https://cdn.builder.io/api/v1/image/assets/TEMP/acc0566c94c54e41f94aa29032ce1c751e68a9cfcb74e845fdbf5af3b120c512?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c";
+          // labelFigure.classList.add('bg-white');
+          labelImage.style.filter = "brightness(0) invert(1)";
+        } else {
+          article.style.backgroundColor = '#3d4154';
+          article.style.color = '#96979d';
+          labelImage.src = "https://cdn.builder.io/api/v1/image/assets/TEMP/9dc81aae6ad6e719a8d6ea4a221c712b2aeb146129db9b46f8b10b27095d3833?placeholderIfAbsent=true&apiKey=877b457759d54d259ca44608a719ca2c";
+          labelFigure.classList.remove('bg-white');
+          labelImage.style.filter = "none";
+        }
+      });
+    });
+  });
+</script>
 {% endblock %}

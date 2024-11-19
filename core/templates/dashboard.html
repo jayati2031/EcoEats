@@ -5,6 +5,42 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
+<style>
+    main {
+    padding-right: 50px;
+    }
+    .chart-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+canvas {
+    width: 100% !important;
+    height: auto!important;
+}
+
+.charts-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px; /* Space between charts */
+    justify-content: center;
+}
+
+.chart-container {
+    flex: 1; /* Equal space allocation */
+    min-width: 300px; /* Minimum chart width */
+    max-width: 600px; /* Maximum chart width */
+    text-align: center; /* Center chart titles */
+}
+.small-chart {
+    height: 200px; /* Adjust height */
+    max-height: 250px; /* Optional: Limit maximum height */
+    width: 100%; /* Maintain responsiveness */
+}
+
+</style>
+
 <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 
 <div class="flex h-full">
@@ -12,7 +48,7 @@
     <!-- <div class="w-[104px] bg-[#252836]"></div> -->
 
     <!-- Right Side Section -->
-    <div class="flex-grow px-2 mr-7">
+    <div class="flex-grow px-2 mr-2">
         <!-- Header Section -->
         <p class="text-2xl font-bold mt-7" style="color: white;">Dashboard</p>
         <div class="rounded-xl relative overflow-hidden my-7 p-6 bg-cover bg-center bg-no-repeat"
@@ -22,7 +58,6 @@
         <p class="text-lg font-bold italic opacity-90 mb-2 text-white">Cook Smart, <span class="text-red-600">Waste Less!</span></p>
     </div>
 </div>
-
         <!-- Statistics Section -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-7">
             <!-- Total Food Items -->
@@ -85,7 +120,7 @@
             <h3 class="text-xl font-semibold mb-4">Expiring Soon</h3>
             <!-- <div class="grid grid-cols-1 md:grid-cols-3 gap-4"> -->
             {% for food_item in expiring_soon %}
-            <div class="bg-gray-700 rounded-xl p-6 hover:translate-y-[-2px] transition">
+            <div class="rounded-xl p-6 hover:translate-y-[-2px] transition" style="background-color: #3d4154;">
                 <h4 class="text-lg mb-2">{{ food_item.name }}</h4>
                 <div class="flex justify-between items-center">
                     <p class="text-white">Expires: {{ food_item.expiration_date }}</p>
@@ -93,25 +128,39 @@
                 </div>
             </div>
             {% empty %}
-            <div class="bg-gray-700 rounded-xl p-6 text-white">
+            <div class="rounded-xl p-6 text-white" style="background-color: #3d4154;">
                 <p>No items expiring soon. You're on top of things!</p>
             </div>
             {% endfor %}
             <!-- </div> -->
         </div>
+<!-- Charts Section -->
+<h3>Statistics</h3>
+<div class="charts-wrapper">
+    <div class="chart-container">
+        <h4>Expired vs. Non-Expired Items</h4>
+        <canvas id="expiredChart" class="small-chart"></canvas>
+    </div>
+    <div class="chart-container">
+        <h4>Food Items by Priority</h4>
+        <canvas id="priorityChart" class="small-chart"></canvas>
+    </div>
+</div>
+
+
 
         <!-- Recipe Section -->
         <div class="grid grid-cols-1 md:grid-cols-1 gap-4 mb-7">
             <h3 class="text-xl font-semibold mb-4">Recipes</h3>
             <!-- <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full"> -->
             {% for recipe in recipes %}
-            <div class="bg-gray-700 rounded-xl p-6 hover:translate-y-[-2px] transition">
+            <div class="rounded-xl p-6 hover:translate-y-[-2px] transition" style="background-color: #3d4154;">
                 <h4 class="text-lg mb-2">{{ recipe.title }}</h4>
                 <p class="text-white mb-2">{{ recipe.description }}</p>
                 <a href="#" class="text-red-500 hover:text-red-300 transition">View Recipe</a>
             </div>
             {% empty %}
-            <div class="bg-gray-700 rounded-xl p-6 text-white">
+            <div class="rounded-xl p-6 text-white" style="background-color: #3d4154;">
                 <p>No recipes available.</p>
             </div>
             {% endfor %}
@@ -119,4 +168,59 @@
         </div>
     </div>
 </div>
+
+    <script>
+    // Data for Expired vs. Non-Expired Items
+    const expiredData = {
+        labels: ['Expired', 'Non-Expired'],
+        datasets: [{
+            data: [{{ expired_count }}, {{ non_expired_count }}],
+            backgroundColor: ['#ff6384', '#36a2eb'],
+            hoverBackgroundColor: ['#ff4d67', '#2196f3']
+        }]
+    };
+    
+    // Render Expired vs. Non-Expired Chart
+    const ctxExpired = document.getElementById('expiredChart').getContext('2d');
+    new Chart(ctxExpired, {
+        type: 'doughnut',
+        data: expiredData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' }
+            }
+        }
+    
+    });
+    
+    // Data for Food Items by Priority
+    const priorityLabels = [{% for item in priority_data %}'{{ item.priority|capfirst }}',{% endfor %}];
+    const priorityCounts = [{% for item in priority_data %}{{ item.count }},{% endfor %}];
+    const priorityData = {
+        labels: priorityLabels,
+        datasets: [{
+            data: priorityCounts,
+            backgroundColor: ['#ffcd56', '#36a2eb', '#ff6384'],
+            hoverBackgroundColor: ['#ffe084', '#2196f3', '#ff4d67']
+        }]
+    };
+    
+    // Render Priority Chart
+    const ctxPriority = document.getElementById('priorityChart').getContext('2d');
+    new Chart(ctxPriority, {
+        type: 'bar',
+        data: priorityData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: { title: { display: true, text: 'Priority Levels' } },
+                y: { title: { display: true, text: 'Count' } }
+            }
+        }
+    });
+    </script>
 {% endblock %}
