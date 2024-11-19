@@ -76,7 +76,7 @@ def dashboard(request):
 #     return render(request, 'food_item_list.html', {'food_items': food_items})
 
 def food_item_list(request):
-    food_items = FoodItem.objects.all()
+    food_items = request.user.food_items.all()
 
     categorized_food_items = {}
     for food_item in food_items:
@@ -144,7 +144,7 @@ def recipes(request):
         return render(request, 'recipe_results.html', {'recipes': recipe_results})
 
     # Fetch the top 10 food items nearing expiry
-    food_items = FoodItem.objects.filter(expiration_date__isnull=False).order_by('expiration_date')[:10]
+    food_items = FoodItem.objects.filter(user=request.user, expiration_date__isnull=False).order_by('expiration_date')[:10]
     return render(request, 'recipe_list.html', {'food_items': food_items})
 
 @login_required(login_url='/login')
